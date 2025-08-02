@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมส์ทัศนศิลป์ - ศูนย์การเรียนรู้และทดสอบ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            min-height: 100vh;
+        }
+        
+        .learning-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+        
+        .learning-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .quiz-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-option.correct {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+        
+        .visual-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            min-height: 120px;
+        }
+        
+        .dot-demo {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 2px;
+            display: inline-block;
+        }
+        
+        .line-demo {
+            margin: 10px;
+        }
+        
+        .line-straight {
+            width: 100px;
+            height: 2px;
+            background: #667eea;
+        }
+        
+        .line-curved {
+            width: 100px;
+            height: 50px;
+            border: 2px solid #764ba2;
+            border-radius: 50px 50px 0 0;
+            border-bottom: none;
+        }
+        
+        .perspective-demo {
+            width: 200px;
+            height: 120px;
+            position: relative;
+            border: 2px solid #667eea;
+            margin: 10px;
+        }
+        
+        .horizon-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #f093fb;
+        }
+        
+        .vanishing-point {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            width: 8px;
+            height: 8px;
+            background: #f5576c;
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+        
+        .perspective-lines {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(to right, #764ba2, transparent);
+        }
+        
+        .balance-demo {
+            width: 150px;
+            height: 100px;
+            position: relative;
+            margin: 10px;
+        }
+        
+        .balance-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 60px;
+            background: #667eea;
+            transform: translate(-50%, -50%);
+        }
+        
+        .balance-left, .balance-right {
+            position: absolute;
+            top: 30%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .balance-left {
+            left: 20%;
+            background: #f093fb;
+        }
+        
+        .balance-right {
+            right: 20%;
+            background: #4facfe;
+        }
+        
+        .unity-demo {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .unity-element {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .contrast-demo {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .contrast-light {
+            width: 50px;
+            height: 50px;
+            background: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        .contrast-dark {
+            width: 50px;
+            height: 50px;
+            background: #000000;
+            border-radius: 8px;
+        }
+        
+        .rhythm-demo {
+            display: flex;
+            gap: 5px;
+            align-items: end;
+        }
+        
+        .rhythm-bar {
+            background: #667eea;
+            width: 20px;
+            border-radius: 2px;
+        }
+        
+        .rhythm-bar:nth-child(1) { height: 20px; }
+        .rhythm-bar:nth-child(2) { height: 40px; }
+        .rhythm-bar:nth-child(3) { height: 30px; }
+        .rhythm-bar:nth-child(4) { height: 50px; }
+        .rhythm-bar:nth-child(5) { height: 25px; }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: confetti-fall 3s ease-in infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .topic-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .difficulty-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .difficulty-easy { background: #d1fae5; color: #065f46; }
+        .difficulty-medium { background: #fef3c7; color: #92400e; }
+        .difficulty-hard { background: #fee2e2; color: #991b1b; }
+        
+        .element-interactive {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .element-interactive:hover {
+            transform: scale(1.1);
+        }
+        
+        .element-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .subject-card {
+            background: linear-gradient(135deg, var(--start-color), var(--end-color));
+            border-radius: 1rem;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .subject-card:hover::before {
+            transform: scale(1.2);
+        }
+        
+        .perspective-1point {
+            width: 200px;
+            height: 120px;
+            position: relative;
+            border: 2px solid #667eea;
+            margin: 10px;
+            background: linear-gradient(to right, #e0f2fe, #b3e5fc);
+        }
+        
+        .perspective-2point {
+            width: 200px;
+            height: 120px;
+            position: relative;
+            border: 2px solid #764ba2;
+            margin: 10px;
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+        }
+        
+        .perspective-3point {
+            width: 200px;
+            height: 120px;
+            position: relative;
+            border: 2px solid #f093fb;
+            margin: 10px;
+            background: linear-gradient(to right, #fff3e0, #ffe0b2);
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50"></div>
+    
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-3">🎨 เกมส์ทัศนศิลป์</h1>
+            <p class="text-xl text-white opacity-90">ศูนย์การเรียนรู้และทดสอบความรู้ทัศนศิลป์ครบครัน</p>
+        </header>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button class="tab-button active px-6 py-3 rounded-xl font-medium transition-all duration-300" data-tab="home">
+                🏠 หน้าหลัก
+            </button>
+            <button class="tab-button px-6 py-3 rounded-xl font-medium bg-white text-gray-700 hover:bg-gray-100" data-tab="learn">
+                📚 เรียนรู้
+            </button>
+            <button class="tab-button px-6 py-3 rounded-xl font-medium bg-white text-gray-700 hover:bg-gray-100" data-tab="quiz">
+                🎮 เกมส์ทดสอบ
+            </button>
+            <button class="tab-button px-6 py-3 rounded-xl font-medium bg-white text-gray-700 hover:bg-gray-100" data-tab="results">
+                📊 ผลคะแนน
+            </button>
+        </div>
+        
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content">
+            <div class="learning-card rounded-2xl shadow-2xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="text-8xl mb-6">🎨</div>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800">ยินดีต้อนรับสู่โลกแห่งทัศนศิลป์</h2>
+                    <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                        ศูนย์การเรียนรู้ครบครันเกี่ยวกับทัศนศิลป์ ครอบคลุม 3 หัวข้อหลัก พร้อมเกมส์ทดสอบที่สุ่มคำถามทุกครั้ง 
+                        เพื่อป้องกันการลอกกันและส่งเสริมการเรียนรู้อย่างแท้จริง
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="subject-card" style="--start-color: #667eea; --end-color: #764ba2;">
+                        <div class="topic-icon">•</div>
+                        <h3 class="text-2xl font-bold mb-2">1. ทัศนธาตุ</h3>
+                        <p class="text-sm opacity-90 mb-4">ส่วนประกอบพื้นฐานที่มองเห็นได้ในงานศิลปะ ประกอบด้วย จุด เส้น รูปร่าง รูปทรง ขนาดและสัดส่วน สี แสงเงา บริเวณว่าง และพื้นผิว</p>
+                        <div class="difficulty-badge difficulty-easy">9 องค์ประกอบ</div>
+                    </div>
+                    
+                    <div class="subject-card" style="--start-color: #f093fb; --end-color: #f5576c;">
+                        <div class="topic-icon">⚖️</div>
+                        <h3 class="text-2xl font-bold mb-2">2. หลักการจัดองค์ประกอบศิลป์</h3>
+                        <p class="text-sm opacity-90 mb-4">หลักการสำคัญในการจัดวางองค์ประกอบ ได้แก่ เอกภาพ ความสมดุล จุดเด่น ความกลมกลืน ความขัดแย้ง สัดส่วน และจังหวะ</p>
+                        <div class="difficulty-badge difficulty-medium">7 หลักการ</div>
+                    </div>
+                    
+                    <div class="subject-card" style="--start-color: #4facfe; --end-color: #00f2fe;">
+                        <div class="topic-icon">📐</div>
+                        <h3 class="text-2xl font-bold mb-2">3. หลักการวาดภาพแบบทัศนียภาพ</h3>
+                        <p class="text-sm opacity-90 mb-4">เทคนิคการวาดภาพให้มีความรู้สึก 3 มิติ ผ่านการใช้จุดรวมสายตา 1 จุด 2 จุด และ 3 จุด</p>
+                        <div class="difficulty-badge difficulty-hard">Perspective</div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-6 mb-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-4xl">🔀</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">ระบบสุ่มคำถาม</h3>
+                            <p class="text-gray-600">คำถามจะสุ่มลำดับใหม่ทุกครั้งที่เริ่มทำแบบทดสอบ เพื่อป้องกันการลอกกัน</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-white rounded-lg p-3">
+                            <div class="text-2xl font-bold text-blue-600">30+</div>
+                            <div class="text-sm text-gray-600">คำถาม</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <div class="text-2xl font-bold text-green-600">3</div>
+                            <div class="text-sm text-gray-600">หัวข้อหลัก</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <div class="text-2xl font-bold text-purple-600">3</div>
+                            <div class="text-sm text-gray-600">ระดับความยาก</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <div class="text-2xl font-bold text-orange-600">∞</div>
+                            <div class="text-sm text-gray-600">ลำดับสุ่ม</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 transform hover:scale-105 mr-4" onclick="switchTab('learn')">
+                        📚 เริ่มเรียนรู้
+                    </button>
+                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 transform hover:scale-105" onclick="switchTab('quiz')">
+                        🎮 ทดสอบเลย
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Learning Tab -->
+        <div id="learn-tab" class="tab-content hidden">
+            <div class="space-y-8">
+                <!-- Visual Elements Section -->
+                <div class="learning-card rounded-2xl shadow-2xl p-8">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">• ทัศนธาตุ (Visual Elements)</h2>
+                    
+                    <div class="element-grid">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-blue-600">จุดและเส้น</h3>
+                            <div class="visual-demo">
+                                <div class="dot-demo element-interactive"></div>
+                                <div class="dot-demo element-interactive"></div>
+                                <div class="dot-demo element-interactive"></div>
+                                <div class="line-demo">
+                                    <div class="line-straight"></div>
+                                </div>
+                                <div class="line-demo">
+                                    <div class="line-curved"></div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 mb-2">✨ คุณสมบัติ</h4>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    <li>• จุดเป็นทัศนธาตุที่เล็กที่สุด</li>
+                                    <li>• เส้นเกิดจากการเรียงต่อจุด</li>
+                                    <li>• เส้นตรง: แข็งแกร่ง มั่นคง</li>
+                                    <li>• เส้นโค้ง: นุ่มนวล อ่อนหวาน</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-purple-600">รูปร่างและรูปทรง</h3>
+                            <div class="visual-demo">
+                                <div style="width: 50px; height: 50px; background: #667eea; border-radius: 50%; margin: 5px;"></div>
+                                <div style="width: 50px; height: 50px; background: #764ba2; margin: 5px;"></div>
+                                <div style="width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 43px solid #f093fb; margin: 5px;"></div>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-800 mb-2">🎯 ความแตกต่าง</h4>
+                                <ul class="text-sm text-purple-700 space-y-1">
+                                    <li>• รูปร่าง: 2 มิติ (กว้าง × ยาว)</li>
+                                    <li>• รูปทรง: 3 มิติ (กว้าง × ยาว × สูง)</li>
+                                    <li>• รูปทรงเกิดจากแสงเงา</li>
+                                    <li>• ให้ความรู้สึกเหมือนจริง</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-green-600">สีและแสงเงา</h3>
+                            <div class="visual-demo">
+                                <div style="width: 40px; height: 40px; background: #ef4444; border-radius: 4px; margin: 3px;"></div>
+                                <div style="width: 40px; height: 40px; background: #f97316; border-radius: 4px; margin: 3px;"></div>
+                                <div style="width: 40px; height: 40px; background: #eab308; border-radius: 4px; margin: 3px;"></div>
+                                <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 4px; margin: 3px;"></div>
+                                <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 4px; margin: 3px;"></div>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-800 mb-2">🌈 ความสำคัญ</h4>
+                                <ul class="text-sm text-green-700 space-y-1">
+                                    <li>• สร้างอารมณ์และความรู้สึก</li>
+                                    <li>• แสงเงาสร้างมิติและปริมาตร</li>
+                                    <li>• สีโทนร้อน: พลังงาน ความอบอุ่น</li>
+                                    <li>• สีโทนเย็น: ความสงบ เย็นชา</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-orange-600">บริเวณว่างและพื้นผิว</h3>
+                            <div class="visual-demo">
+                                <div style="width: 120px; height: 80px; border: 2px dashed #667eea; position: relative;">
+                                    <div style="width: 30px; height: 30px; background: #764ba2; border-radius: 50%; position: absolute; top: 25px; left: 25px;"></div>
+                                </div>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-orange-800 mb-2">🔲 ประเภท</h4>
+                                <ul class="text-sm text-orange-700 space-y-1">
+                                    <li>• Positive Space: พื้นที่ที่มีวัตถุ</li>
+                                    <li>• Negative Space: พื้นที่ว่าง</li>
+                                    <li>• พื้นผิว: เรียบ หยาบ นุ่ม แข็ง</li>
+                                    <li>• รับรู้ได้จากสายตาและการสัมผัส</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Art Composition Principles Section -->
+                <div class="learning-card rounded-2xl shadow-2xl p-8">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">⚖️ หลักการจัดองค์ประกอบศิลป์</h2>
+                    
+                    <div class="element-grid">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-pink-600">เอกภาพและความสมดุล</h3>
+                            <div class="visual-demo">
+                                <div class="unity-demo">
+                                    <div class="unity-element"></div>
+                                    <div class="unity-element"></div>
+                                    <div class="unity-element"></div>
+                                </div>
+                                <div class="balance-demo">
+                                    <div class="balance-center"></div>
+                                    <div class="balance-left"></div>
+                                    <div class="balance-right"></div>
+                                </div>
+                            </div>
+                            <div class="bg-pink-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-pink-800 mb-2">✨ คุณสมบัติ</h4>
+                                <ul class="text-sm text-pink-700 space-y-1">
+                                    <li>• เอกภาพ: ความเป็นอันหนึ่งอันเดียว</li>
+                                    <li>• ความสมดุล: ความเท่าเทียมกัน</li>
+                                    <li>• สมดุลแบบสมมาตร</li>
+                                    <li>• สมดุลแบบอสมมาตร</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-red-600">จุดเด่นและความขัดแย้ง</h3>
+                            <div class="visual-demo">
+                                <div class="contrast-demo">
+                                    <div class="contrast-light"></div>
+                                    <div class="contrast-dark"></div>
+                                </div>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-red-800 mb-2">🎯 หลักการ</h4>
+                                <ul class="text-sm text-red-700 space-y-1">
+                                    <li>• จุดเด่น: เน้นส่วนสำคัญ</li>
+                                    <li>• ความขัดแย้ง: ความแตกต่าง</li>
+                                    <li>• ใช้สี ขนาด รูปร่างที่ต่างกัน</li>
+                                    <li>• ดึงดูดความสนใจ</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-teal-600">ความกลมกลืนและจังหวะ</h3>
+                            <div class="visual-demo">
+                                <div class="rhythm-demo">
+                                    <div class="rhythm-bar"></div>
+                                    <div class="rhythm-bar"></div>
+                                    <div class="rhythm-bar"></div>
+                                    <div class="rhythm-bar"></div>
+                                    <div class="rhythm-bar"></div>
+                                </div>
+                            </div>
+                            <div class="bg-teal-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-teal-800 mb-2">🎵 ลักษณะ</h4>
+                                <ul class="text-sm text-teal-700 space-y-1">
+                                    <li>• ความกลมกลืน: สอดคล้องกัน</li>
+                                    <li>• จังหวะ: การเคลื่อนไหว</li>
+                                    <li>• การทำซ้ำอย่างมีระเบียบ</li>
+                                    <li>• สร้างความต่อเนื่อง</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-indigo-600">ขนาดและสัดส่วน</h3>
+                            <div class="visual-demo">
+                                <div style="width: 30px; height: 30px; background: #667eea; border-radius: 4px; margin: 5px; display: inline-block;"></div>
+                                <div style="width: 50px; height: 50px; background: #764ba2; border-radius: 4px; margin: 5px; display: inline-block;"></div>
+                                <div style="width: 70px; height: 70px; background: #f093fb; border-radius: 4px; margin: 5px; display: inline-block;"></div>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-indigo-800 mb-2">📏 หลักการ</h4>
+                                <ul class="text-sm text-indigo-700 space-y-1">
+                                    <li>• อัตราส่วนทอง: 1:1.618</li>
+                                    <li>• กฎของสาม: แบ่ง 3 ส่วน</li>
+                                    <li>• ความสัมพันธ์ของขนาด</li>
+                                    <li>• สร้างความสมดุลและสวยงาม</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Perspective Drawing Section -->
+                <div class="learning-card rounded-2xl shadow-2xl p-8">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">📐 หลักการวาดภาพแบบทัศนียภาพ (Perspective)</h2>
+                    
+                    <div class="element-grid">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-blue-600">Perspective 1 จุด</h3>
+                            <div class="visual-demo">
+                                <div class="perspective-1point">
+                                    <div class="horizon-line"></div>
+                                    <div class="vanishing-point"></div>
+                                    <div class="perspective-lines"></div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 mb-2">📏 ลักษณะ</h4>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    <li>• มีจุดรวมสายตา 1 จุด</li>
+                                    <li>• มองวัตถุจากด้านหน้าตรง</li>
+                                    <li>• เหมาะสำหรับถนน ทางเดิน</li>
+                                    <li>• ง่ายที่สุดในการวาด</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-purple-600">Perspective 2 จุด</h3>
+                            <div class="visual-demo">
+                                <div class="perspective-2point">
+                                    <div class="horizon-line"></div>
+                                    <div style="position: absolute; top: 50%; left: 10px; width: 6px; height: 6px; background: #f5576c; border-radius: 50%; transform: translateY(-50%);"></div>
+                                    <div style="position: absolute; top: 50%; right: 10px; width: 6px; height: 6px; background: #f5576c; border-radius: 50%; transform: translateY(-50%);"></div>
+                                </div>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-800 mb-2">🎯 ลักษณะ</h4>
+                                <ul class="text-sm text-purple-700 space-y-1">
+                                    <li>• มีจุดรวมสายตา 2 จุด</li>
+                                    <li>• มองวัตถุจากมุม</li>
+                                    <li>• เหมาะสำหรับอาคาร บ้าน</li>
+                                    <li>• ให้ความรู้สึกมีมิติมากขึ้น</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4 text-orange-600">Perspective 3 จุด</h3>
+                            <div class="visual-demo">
+                                <div class="perspective-3point">
+                                    <div class="horizon-line"></div>
+                                    <div style="position: absolute; top: 50%; left: 10px; width: 6px; height: 6px; background: #f5576c; border-radius: 50%; transform: translateY(-50%);"></div>
+                                    <div style="position: absolute; top: 50%; right: 10px; width: 6px; height: 6px; background: #f5576c; border-radius: 50%; transform: translateY(-50%);"></div>
+                                    <div style="position: absolute; top: 10px; left: 50%; width: 6px; height: 6px; background: #f5576c; border-radius: 50%; transform: translateX(-50%);"></div>
+                                </div>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-orange-800 mb-2">🏗️ ลักษณะ</h4>
+                                <ul class="text-sm text-orange-700 space-y-1">
+                                    <li>• มีจุดรวมสายตา 3 จุด</li>
+                                    <li>• มองจากด้านบนหรือล่าง</li>
+                                    <li>• เหมาะสำหรับตึกสูง</li>
+                                    <li>• ให้ความรู้สึกยิ่งใหญ่</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 transform hover:scale-105" onclick="switchTab('quiz')">
+                        🎮 ทดสอบความรู้
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quiz Tab -->
+        <div id="quiz-tab" class="tab-content hidden">
+            <div class="learning-card rounded-2xl shadow-2xl p-8">
+                <!-- Quiz Progress -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-16 h-16">
+                            <svg class="progress-ring w-16 h-16" viewBox="0 0 120 120">
+                                <circle class="progress-ring-circle stroke-gray-200" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                <circle id="progress-circle" class="progress-ring-circle stroke-blue-500" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="progress-text" class="text-sm font-bold text-blue-500">0%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">ข้อที่ <span id="current-question-num">1</span> จาก <span id="total-questions-num">30</span></div>
+                            <div class="text-lg font-semibold">คะแนน: <span id="current-score">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="correct-answers">0</div>
+                            <div class="text-xs text-gray-600">ถูก</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-red-600" id="wrong-answers">0</div>
+                            <div class="text-xs text-gray-600">ผิด</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Start Screen -->
+                <div id="quiz-start" class="text-center py-12">
+                    <div class="text-6xl mb-6">🎨</div>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800">เกมส์ทดสอบความรู้ทัศนศิลป์</h2>
+                    <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                        ทดสอบความรู้ครบทั้ง 3 หัวข้อหลัก ผ่านคำถาม 30+ ข้อที่สุ่มใหม่ทุกครั้ง 
+                        เพื่อป้องกันการลอกกันและส่งเสริมการเรียนรู้อย่างแท้จริง
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl mb-2">•</div>
+                            <h3 class="font-semibold">ทัศนธาตุ</h3>
+                            <p class="text-sm text-gray-600">9 องค์ประกอบพื้นฐาน</p>
+                        </div>
+                        <div class="p-4 bg-pink-50 rounded-lg">
+                            <div class="text-2xl mb-2">⚖️</div>
+                            <h3 class="font-semibold">หลักการจัดองค์ประกอบศิลป์</h3>
+                            <p class="text-sm text-gray-600">7 หลักการสำคัญ</p>
+                        </div>
+                        <div class="p-4 bg-cyan-50 rounded-lg">
+                            <div class="text-2xl mb-2">📐</div>
+                            <h3 class="font-semibold">หลักการวาดภาพแบบทัศนียภาพ</h3>
+                            <p class="text-sm text-gray-600">Perspective 1-3 จุด</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg">
+                            <span class="text-xl">🔀</span>
+                            <span class="font-medium">คำถามสุ่มใหม่ทุกครั้ง - ป้องกันการลอกกัน</span>
+                        </div>
+                    </div>
+                    
+                    <button id="start-quiz-btn" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 transform hover:scale-105">
+                        🚀 เริ่มทำแบบทดสอบ
+                    </button>
+                </div>
+                
+                <!-- Quiz Question Screen -->
+                <div id="quiz-question" class="hidden">
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span id="question-topic-icon" class="text-2xl"></span>
+                                <span id="question-topic" class="text-lg font-semibold text-blue-600"></span>
+                            </div>
+                            <div id="question-difficulty" class="difficulty-badge"></div>
+                        </div>
+                        
+                        <h3 id="question-title" class="text-2xl font-bold mb-4 text-center"></h3>
+                        <div id="question-visual" class="flex justify-center mb-6">
+                            <!-- Visual elements will be inserted here -->
+                        </div>
+                        <p id="question-text" class="text-lg text-center text-gray-700"></p>
+                    </div>
+                    
+                    <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <!-- Options will be inserted here -->
+                    </div>
+                    
+                    <div id="quiz-feedback" class="hidden text-center py-6">
+                        <div id="feedback-icon" class="text-6xl mb-4"></div>
+                        <div id="feedback-text" class="text-xl font-semibold mb-4"></div>
+                        <div id="feedback-explanation" class="text-gray-600 mb-6 max-w-2xl mx-auto"></div>
+                        <button id="next-question-btn" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300">
+                            คำถามถัดไป →
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quiz Results Screen -->
+                <div id="quiz-results" class="hidden text-center py-12">
+                    <div id="results-icon" class="text-8xl mb-6"></div>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800">ผลการทดสอบ</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
+                        <div class="bg-gradient-to-br from-blue-400 to-purple-400 rounded-xl p-6 text-white">
+                            <div class="text-3xl font-bold" id="final-score">0</div>
+                            <div class="text-sm opacity-90">คะแนนรวม</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-400 to-teal-400 rounded-xl p-6 text-white">
+                            <div class="text-3xl font-bold" id="final-correct">0</div>
+                            <div class="text-sm opacity-90">ตอบถูก</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-red-400 to-pink-400 rounded-xl p-6 text-white">
+                            <div class="text-3xl font-bold" id="final-wrong">0</div>
+                            <div class="text-sm opacity-90">ตอบผิด</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-400 to-yellow-400 rounded-xl p-6 text-white">
+                            <div class="text-3xl font-bold" id="final-percentage">0%</div>
+                            <div class="text-sm opacity-90">เปอร์เซ็นต์</div>
+                        </div>
+                    </div>
+                    
+                    <div id="performance-message" class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto"></div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button id="retake-quiz-btn" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition duration-300">
+                            🔄 ทำแบบทดสอบอีกครั้ง
+                        </button>
+                        <button id="view-results-btn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl transition duration-300">
+                            📊 ดูผลคะแนน
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Tab -->
+        <div id="results-tab" class="tab-content hidden">
+            <div class="learning-card rounded-2xl shadow-2xl p-8">
+                <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">📊 ผลคะแนนการทดสอบ</h2>
+                
+                <div id="no-results" class="text-center py-12">
+                    <div class="text-6xl mb-4">📈</div>
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-600">ยังไม่มีผลการทดสอบ</h3>
+                    <p class="text-gray-500 mb-6">ทำแบบทดสอบเพื่อดูผลคะแนนและสถิติการเรียนรู้</p>
+                    <button class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition duration-300" onclick="switchTab('quiz')">
+                        ทำแบบทดสอบ
+                    </button>
+                </div>
+                
+                <div id="results-content" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl p-6">
+                            <div class="text-2xl mb-2">🎯</div>
+                            <h3 class="font-semibold text-gray-800">คะแนนเฉลี่ย</h3>
+                            <div class="text-3xl font-bold text-blue-600" id="avg-score">0</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-green-100 to-teal-100 rounded-xl p-6">
+                            <div class="text-2xl mb-2">✅</div>
+                            <h3 class="font-semibold text-gray-800">ความแม่นยำ</h3>
+                            <div class="text-3xl font-bold text-green-600" id="avg-accuracy">0%</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-orange-100 to-red-100 rounded-xl p-6">
+                            <div class="text-2xl mb-2">📚</div>
+                            <h3 class="font-semibold text-gray-800">ครั้งที่ทำ</h3>
+                            <div class="text-3xl font-bold text-orange-600" id="total-attempts">0</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl p-6">
+                            <div class="text-2xl mb-2">🏆</div>
+                            <h3 class="font-semibold text-gray-800">คะแนนสูงสุด</h3>
+                            <div class="text-3xl font-bold text-yellow-600" id="best-score">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 class="text-xl font-semibold mb-4">📈 ประวัติการทดสอบ</h3>
+                            <div id="quiz-history" class="space-y-3 max-h-64 overflow-y-auto">
+                                <!-- History items will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 class="text-xl font-semibold mb-4">📊 สถิติตามหัวข้อ</h3>
+                            <div id="topic-stats" class="space-y-3">
+                                <!-- Topic statistics will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 'home';
+        let quizData = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let quizResults = JSON.parse(localStorage.getItem('visualArtsQuizResults')) || [];
+        
+        // Comprehensive quiz questions database - 30+ questions covering all 3 subjects
+        const allQuizQuestions = {
+            visual_elements: [
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'easy',
+                    question: 'จุดเป็นทัศนธาตุที่มีลักษณะอย่างไร?',
+                    options: ['เป็นทัศนธาตุที่เล็กที่สุด', 'เป็นทัศนธาตุที่ใหญ่ที่สุด', 'มีเพียง 2 มิติ', 'มี 3 มิติ'],
+                    correct: 0,
+                    explanation: 'จุดเป็นทัศนธาตุที่เล็กที่สุดและเป็นจุดเริ่มต้นของการสร้างสรรค์งานศิลปะ'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'medium',
+                    question: 'เส้นตรงให้ความรู้สึกอย่างไร?',
+                    options: ['นุ่มนวล อ่อนหวาน', 'แข็งแกร่ง มั่นคง', 'เคลื่อนไหว มีพลังงาน', 'ลึกลับ น่าค้นหา'],
+                    correct: 1,
+                    explanation: 'เส้นตรงให้ความรู้สึกแข็งแกร่ง มั่นคง และเป็นระเบียบ'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'easy',
+                    question: 'รูปร่าง (Shape) มีกี่มิติ?',
+                    options: ['1 มิติ', '2 มิติ', '3 มิติ', '4 มิติ'],
+                    correct: 1,
+                    explanation: 'รูปร่าง (Shape) มี 2 มิติ คือ กว้างและยาว ไม่มีความลึก'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'medium',
+                    question: 'รูปทรง (Form) เกิดขึ้นได้อย่างไร?',
+                    options: ['จากการวาดเส้น', 'จากการใช้สี', 'จากแสงเงาและมิติ', 'จากการใช้จุด'],
+                    correct: 2,
+                    explanation: 'รูปทรง (Form) เกิดจากการใช้แสงเงาและการสร้างมิติ ทำให้เกิดความลึกและปริมาตร'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'easy',
+                    question: 'สีแดงสื่อความหมายใด?',
+                    options: ['ความสงบ', 'ความรัก พลังงาน', 'ความเศร้า', 'ความเย็นชา'],
+                    correct: 1,
+                    explanation: 'สีแดงเป็นสีโทนร้อนที่สื่อความหมายถึงความรัก ความหลงใหล และพลังงาน'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'medium',
+                    question: 'แสงเงามีหน้าที่หลักอะไรในงานศิลปะ?',
+                    options: ['ทำให้สีสวย', 'สร้างมิติและปริมาตร', 'ประหยัดสี', 'ทำให้งานเสร็จเร็ว'],
+                    correct: 1,
+                    explanation: 'แสงเงามีหน้าที่สร้างมิติและปริมาตรให้กับวัตถุ ทำให้ดูเหมือนจริงและมีความลึก'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'medium',
+                    question: 'Negative Space คืออะไร?',
+                    options: ['พื้นที่ที่มีวัตถุ', 'พื้นที่ว่างรอบวัตถุ', 'พื้นที่สีดำ', 'พื้นที่ที่ไม่สำคัญ'],
+                    correct: 1,
+                    explanation: 'Negative Space คือพื้นที่ว่างรอบๆ วัตถุ ซึ่งมีความสำคัญในการสร้างความสมดุล'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'easy',
+                    question: 'พื้นผิวของกระจกมีลักษณะอย่างไร?',
+                    options: ['หยาบ', 'เรียบ', 'นุ่ม', 'แข็ง'],
+                    correct: 1,
+                    explanation: 'กระจกมีพื้นผิวเรียบ สะท้อนแสงได้ดี และให้ความรู้สึกเย็นและใส'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'hard',
+                    question: 'ทัศนธาตุทั้งหมดมีกี่องค์ประกอบ?',
+                    options: ['7 องค์ประกอบ', '8 องค์ประกอบ', '9 องค์ประกอบ', '10 องค์ประกอบ'],
+                    correct: 2,
+                    explanation: 'ทัศนธาตุประกอบด้วย 9 องค์ประกอบ คือ จุด เส้น รูปร่าง รูปทรง ขนาดและสัดส่วน สี แสงเงา บริเวณว่าง และพื้นผิว'
+                },
+                {
+                    topic: 'ทัศนธาตุ',
+                    icon: '•',
+                    difficulty: 'hard',
+                    question: 'เส้นโค้งสื่อความหมายใด?',
+                    options: ['ความแข็งแกร่ง', 'ความนุ่มนวล อ่อนหวาน', 'ความมั่นคง', 'ความเร็ว'],
+                    correct: 1,
+                    explanation: 'เส้นโค้งสื่อความหมายถึงความนุ่มนวล อ่อนหวาน และความอ่อนโยน'
+                }
+            ],
+            composition: [
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'easy',
+                    question: 'เอกภาพ (Unity) หมายถึงอะไร?',
+                    options: ['การแยกส่วนต่างๆ', 'ความเป็นอันหนึ่งอันเดียวกัน', 'การใช้สีเดียว', 'การวาดรูปเดียว'],
+                    correct: 1,
+                    explanation: 'เอกภาพ (Unity) คือการจัดองค์ประกอบให้มีความเป็นอันหนึ่งอันเดียวกัน กลมกลืน และสัมพันธ์กัน'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'medium',
+                    question: 'ความสมดุล (Balance) มีกี่ประเภท?',
+                    options: ['1 ประเภท', '2 ประเภท', '3 ประเภท', '4 ประเภท'],
+                    correct: 1,
+                    explanation: 'ความสมดุลมี 2 ประเภทหลัก คือ สมดุลแบบสมมาตร (Symmetrical) และสมดุลแบบอสมมาตร (Asymmetrical)'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'easy',
+                    question: 'จุดเด่น (Dominance) มีจุดประสงค์อะไร?',
+                    options: ['ทำให้งานดูซับซ้อน', 'ดึงดูดความสนใจ', 'ประหยัดเวลา', 'ใช้สีน้อยลง'],
+                    correct: 1,
+                    explanation: 'จุดเด่น (Dominance) มีจุดประสงค์เพื่อเน้นส่วนสำคัญของภาพให้เด่นออกมาและดึงดูดความสนใจ'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'medium',
+                    question: 'ความกลมกลืน (Harmony) ตรงข้ามกับหลักการใด?',
+                    options: ['เอกภาพ', 'ความสมดุล', 'ความขัดแย้ง', 'จังหวะ'],
+                    correct: 2,
+                    explanation: 'ความกลมกลืน (Harmony) ตรงข้ามกับความขัดแย้ง (Contrast) แต่ทั้งสองหลักการนี้สามารถใช้ร่วมกันได้'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'hard',
+                    question: 'อัตราส่วนทองคือเท่าไหร่?',
+                    options: ['1:1', '1:1.618', '1:2', '1:3'],
+                    correct: 1,
+                    explanation: 'อัตราส่วนทอง (Golden Ratio) คือ 1:1.618 ซึ่งถือว่าเป็นสัดส่วนที่สวยงามที่สุด'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'medium',
+                    question: 'จังหวะและลีลา (Rhythm) เกิดจากอะไร?',
+                    options: ['การใช้สีเดียว', 'การทำซ้ำอย่างมีระเบียบ', 'การวาดเส้นตรง', 'การใช้รูปร่างเดียว'],
+                    correct: 1,
+                    explanation: 'จังหวะและลีลา (Rhythm) เกิดจากการทำซ้ำขององค์ประกอบต่างๆ อย่างมีระเบียบ สร้างความต่อเนื่อง'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'hard',
+                    question: 'กฎของสามในการจัดองค์ประกอบคืออะไร?',
+                    options: ['ใช้สี 3 สี', 'แบ่งพื้นที่เป็น 3 ส่วน', 'ใช้รูปทรง 3 แบบ', 'วาด 3 เส้น'],
+                    correct: 1,
+                    explanation: 'กฎของสาม (Rule of Thirds) คือการแบ่งพื้นที่เป็น 3 ส่วนเท่าๆ เพื่อจัดองค์ประกอบให้สวยงาม'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'easy',
+                    question: 'ความขัดแย้ง (Contrast) ใช้เพื่ออะไร?',
+                    options: ['ทำให้งานดูเรียบง่าย', 'สร้างจุดสนใจ', 'ประหยัดวัสดุ', 'ทำให้งานเสร็จเร็ว'],
+                    correct: 1,
+                    explanation: 'ความขัดแย้ง (Contrast) ใช้เพื่อสร้างจุดสนใจและความน่าสนใจผ่านความแตกต่างขององค์ประกอบ'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'hard',
+                    question: 'หลักการจัดองค์ประกอบศิลป์มีทั้งหมดกี่หลักการ?',
+                    options: ['5 หลักการ', '6 หลักการ', '7 หลักการ', '8 หลักการ'],
+                    correct: 2,
+                    explanation: 'หลักการจัดองค์ประกอบศิลป์มี 7 หลักการ คือ เอกภาพ ความสมดุล จุดเด่น ความกลมกลืน ความขัดแย้ง สัดส่วน และจังหวะ'
+                },
+                {
+                    topic: 'หลักการจัดองค์ประกอบศิลป์',
+                    icon: '⚖️',
+                    difficulty: 'medium',
+                    question: 'การสร้างจุดเด่นทำได้โดยวิธีใด?',
+                    options: ['ใช้สีเดียวทั้งหมด', 'ใช้ขนาดและสีที่แตกต่าง', 'วาดรูปเดียว', 'ใช้เส้นตรงเท่านั้น'],
+                    correct: 1,
+                    explanation: 'การสร้างจุดเด่นทำได้โดยใช้ขนาด สี รูปร่าง หรือตำแหน่งที่แตกต่างจากส่วนอื่นๆ'
+                }
+            ],
+            perspective: [
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'easy',
+                    question: 'Perspective 1 จุดใช้เมื่อไหร่?',
+                    options: ['มองจากมุม', 'มองจากด้านหน้าตรง', 'มองจากด้านบน', 'มองจากด้านข้าง'],
+                    correct: 1,
+                    explanation: 'Perspective 1 จุดใช้เมื่อมองวัตถุจากด้านหน้าตรง เหมาะสำหรับถนน ทางเดิน'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'medium',
+                    question: 'Perspective 2 จุดมีจุดรวมสายตากี่จุด?',
+                    options: ['1 จุด', '2 จุด', '3 จุด', '4 จุด'],
+                    correct: 1,
+                    explanation: 'Perspective 2 จุดมีจุดรวมสายตา 2 จุด ใช้เมื่อมองวัตถุจากมุม'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'easy',
+                    question: 'Perspective 3 จุดใช้เมื่อไหร่?',
+                    options: ['มองในระดับเดียวกัน', 'มองจากด้านบนหรือล่าง', 'มองจากด้านข้าง', 'มองจากด้านหลัง'],
+                    correct: 1,
+                    explanation: 'Perspective 3 จุดใช้เมื่อมองวัตถุจากด้านบนหรือด้านล่าง เหมาะสำหรับตึกสูง'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'medium',
+                    question: 'Perspective ใดที่ง่ายที่สุดในการวาด?',
+                    options: ['1 จุด', '2 จุด', '3 จุด', 'ทุกแบบเท่ากัน'],
+                    correct: 0,
+                    explanation: 'Perspective 1 จุดเป็นแบบที่ง่ายที่สุดในการวาด เพราะมีจุดรวมสายตาเพียงจุดเดียว'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'hard',
+                    question: 'Perspective 2 จุดเหมาะสำหรับวาดอะไรมากที่สุด?',
+                    options: ['ถนน', 'อาคาร บ้าน', 'ตึกสูง', 'ทางเดิน'],
+                    correct: 1,
+                    explanation: 'Perspective 2 จุดเหมาะสำหรับวาดอาคาร บ้าน เพราะสามารถเห็นสองด้านของอาคาร'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'medium',
+                    question: 'Perspective 3 จุดให้ความรู้สึกอย่างไร?',
+                    options: ['เรียบง่าย', 'ยิ่งใหญ่', 'เล็ก', 'ธรรมดา'],
+                    correct: 1,
+                    explanation: 'Perspective 3 จุดให้ความรู้สึกยิ่งใหญ่และมีมิติมาก เหมาะสำหรับตึกสูง'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'hard',
+                    question: 'การวาด Perspective ช่วยให้ภาพมีลักษณะอย่างไร?',
+                    options: ['2 มิติ', '3 มิติ', '4 มิติ', '1 มิติ'],
+                    correct: 1,
+                    explanation: 'การวาด Perspective ช่วยให้ภาพมีความรู้สึก 3 มิติ มีความลึกและเหมือนจริง'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'easy',
+                    question: 'Perspective 1 จุดเหมาะสำหรับวาดอะไร?',
+                    options: ['อาคาร', 'ถนน ทางเดิน', 'ตึกสูง', 'บ้าน'],
+                    correct: 1,
+                    explanation: 'Perspective 1 จุดเหมาะสำหรับวาดถนน ทางเดิน ที่มองเห็นจากด้านหน้าตรง'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'medium',
+                    question: 'Perspective ทั้งหมดมีกี่ประเภทหลัก?',
+                    options: ['2 ประเภท', '3 ประเภท', '4 ประเภท', '5 ประเภท'],
+                    correct: 1,
+                    explanation: 'Perspective มี 3 ประเภทหลัก คือ 1 จุด 2 จุด และ 3 จุดรวมสายตา'
+                },
+                {
+                    topic: 'หลักการวาดภาพแบบทัศนียภาพ',
+                    icon: '📐',
+                    difficulty: 'hard',
+                    question: 'การใช้ Perspective ช่วยในการวาดภาพประเภทใด?',
+                    options: ['ภาพเหมือน', 'ภาพสถาปัตยกรรม', 'ภาพการ์ตูน', 'ภาพนิ่งชีวิต'],
+                    correct: 1,
+                    explanation: 'การใช้ Perspective ช่วยมากในการวาดภาพสถาปัตยกรรม เพื่อให้ได้ความลึกและมิติที่ถูกต้อง'
+                }
+            ]
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeQuiz();
+            updateResultsTab();
+        });
+        
+        // Tab management
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            document.getElementById(tabName + '-tab').classList.add('fade-in');
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+            });
+            
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            activeButton.classList.add('active');
+            activeButton.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+            
+            currentTab = tabName;
+        }
+        
+        // Quiz functionality
+        function initializeQuiz() {
+            document.getElementById('start-quiz-btn').addEventListener('click', startQuiz);
+            document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
+            document.getElementById('retake-quiz-btn').addEventListener('click', startQuiz);
+            document.getElementById('view-results-btn').addEventListener('click', () => switchTab('results'));
+        }
+        
+        function startQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            
+            // Create randomized quiz from all topics
+            quizData = createRandomizedQuiz();
+            
+            // Show quiz question screen
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-question').classList.remove('hidden');
+            
+            // Update UI
+            updateQuizUI();
+            showQuestion();
+        }
+        
+        function createRandomizedQuiz() {
+            const quiz = [];
+            const topics = Object.keys(allQuizQuestions);
+            
+            // Get questions from each topic
+            topics.forEach(topic => {
+                const topicQuestions = [...allQuizQuestions[topic]];
+                // Shuffle questions in this topic
+                for (let i = topicQuestions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [topicQuestions[i], topicQuestions[j]] = [topicQuestions[j], topicQuestions[i]];
+                }
+                // Add all questions from this topic
+                quiz.push(...topicQuestions);
+            });
+            
+            // Final shuffle of all questions
+            for (let i = quiz.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [quiz[i], quiz[j]] = [quiz[j], quiz[i]];
+            }
+            
+            return quiz;
+        }
+        
+        function showQuestion() {
+            const question = quizData[currentQuestionIndex];
+            
+            // Update question content
+            document.getElementById('question-topic-icon').textContent = question.icon;
+            document.getElementById('question-topic').textContent = question.topic;
+            document.getElementById('question-title').textContent = `ข้อที่ ${currentQuestionIndex + 1}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            // Update difficulty badge
+            const difficultyBadge = document.getElementById('question-difficulty');
+            difficultyBadge.className = `difficulty-badge difficulty-${question.difficulty}`;
+            difficultyBadge.textContent = question.difficulty === 'easy' ? 'ง่าย' : 
+                                        question.difficulty === 'medium' ? 'ปานกลาง' : 'ยาก';
+            
+            // Clear visual elements
+            document.getElementById('question-visual').innerHTML = '';
+            
+            // Randomize answer positions
+            const shuffledOptions = [...question.options];
+            const correctAnswer = question.options[question.correct];
+            
+            // Shuffle the options array
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            
+            // Find new position of correct answer
+            const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+            
+            // Update options
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option bg-white border-2 border-gray-200 rounded-xl p-4 text-center font-medium hover:border-blue-300';
+                optionDiv.textContent = option;
+                optionDiv.addEventListener('click', () => selectAnswer(index, newCorrectIndex));
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Hide feedback
+            document.getElementById('quiz-feedback').classList.add('hidden');
+        }
+        
+        function selectAnswer(selectedIndex, correctIndex) {
+            const question = quizData[currentQuestionIndex];
+            const isCorrect = selectedIndex === correctIndex;
+            
+            // Update score
+            if (isCorrect) {
+                const points = question.difficulty === 'easy' ? 3 : 
+                              question.difficulty === 'medium' ? 4 : 5;
+                score += points;
+                correctAnswers++;
+            } else {
+                wrongAnswers++;
+            }
+            
+            // Update options appearance
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach((option, index) => {
+                option.classList.remove('hover:border-blue-300');
+                option.style.cursor = 'default';
+                
+                if (index === correctIndex) {
+                    option.classList.add('correct');
+                }
+                if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Show feedback
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackExplanation = document.getElementById('feedback-explanation');
+            
+            if (isCorrect) {
+                feedbackIcon.textContent = '🎉';
+                feedbackText.textContent = 'ถูกต้อง!';
+                feedbackText.className = 'text-xl font-semibold mb-4 text-green-600';
+                createConfetti();
+            } else {
+                feedbackIcon.textContent = '❌';
+                feedbackText.textContent = 'ไม่ถูกต้อง';
+                feedbackText.className = 'text-xl font-semibold mb-4 text-red-600';
+            }
+            
+            feedbackExplanation.textContent = question.explanation;
+            document.getElementById('quiz-feedback').classList.remove('hidden');
+            
+            // Update next button text
+            const nextBtn = document.getElementById('next-question-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                nextBtn.textContent = 'คำถามถัดไป →';
+            } else {
+                nextBtn.textContent = 'ดูผลคะแนน 🏆';
+            }
+            
+            updateQuizUI();
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+        
+        function showQuizResults() {
+            // Hide question screen
+            document.getElementById('quiz-question').classList.add('hidden');
+            
+            // Show results screen
+            document.getElementById('quiz-results').classList.remove('hidden');
+            
+            // Calculate results
+            const totalQuestions = quizData.length;
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            // Update results display
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-correct').textContent = correctAnswers;
+            document.getElementById('final-wrong').textContent = wrongAnswers;
+            document.getElementById('final-percentage').textContent = percentage + '%';
+            
+            // Set performance message and icon
+            const resultsIcon = document.getElementById('results-icon');
+            const performanceMessage = document.getElementById('performance-message');
+            
+            if (percentage >= 90) {
+                resultsIcon.textContent = '🏆';
+                performanceMessage.textContent = 'ยอดเยี่ยมมาก! คุณเชี่ยวชาญทัศนศิลป์แล้ว! ความรู้ของคุณอยู่ในระดับสูงมาก สามารถนำไปประยุกต์ใช้ในงานศิลปะได้อย่างมั่นใจ';
+                createConfetti(50);
+            } else if (percentage >= 80) {
+                resultsIcon.textContent = '🎨';
+                performanceMessage.textContent = 'ดีเยี่ยม! คุณมีความเข้าใจทัศนศิลป์ในระดับดี ลองฝึกฝนเพิ่มเติมในส่วนที่ยังไม่แน่ใจ';
+            } else if (percentage >= 70) {
+                resultsIcon.textContent = '🌟';
+                performanceMessage.textContent = 'ดีมาก! คุณมีพื้นฐานความรู้ทัศนศิลป์ที่ดี ลองทบทวนเนื้อหาและเล่นอีกครั้งเพื่อเพิ่มความเชี่ยวชาญ';
+            } else if (percentage >= 60) {
+                resultsIcon.textContent = '📚';
+                performanceMessage.textContent = 'ไม่เลว! คุณมีความรู้พื้นฐาน แต่ยังมีโอกาสพัฒนาอีกมาก ลองกลับไปเรียนรู้เพิ่มเติม';
+            } else {
+                resultsIcon.textContent = '💪';
+                performanceMessage.textContent = 'ยังมีโอกาสพัฒนาอีกมาก! แนะนำให้ทบทวนเนื้อหาในส่วนการเรียนรู้ก่อนทำแบบทดสอบอีกครั้ง';
+            }
+            
+            // Save results
+            const result = {
+                date: new Date().toLocaleDateString('th-TH'),
+                time: new Date().toLocaleTimeString('th-TH'),
+                score: score,
+                correct: correctAnswers,
+                wrong: wrongAnswers,
+                percentage: percentage,
+                totalQuestions: totalQuestions
+            };
+            
+            quizResults.push(result);
+            localStorage.setItem('visualArtsQuizResults', JSON.stringify(quizResults));
+            
+            updateResultsTab();
+        }
+        
+        function updateQuizUI() {
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            const progressCircle = document.getElementById('progress-circle');
+            const circumference = 2 * Math.PI * 52;
+            const offset = circumference - (progress / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+            
+            document.getElementById('progress-text').textContent = Math.round(progress) + '%';
+            document.getElementById('current-question-num').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions-num').textContent = quizData.length;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('correct-answers').textContent = correctAnswers;
+            document.getElementById('wrong-answers').textContent = wrongAnswers;
+        }
+        
+        function updateResultsTab() {
+            const noResults = document.getElementById('no-results');
+            const resultsContent = document.getElementById('results-content');
+            
+            if (quizResults.length === 0) {
+                noResults.classList.remove('hidden');
+                resultsContent.classList.add('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            resultsContent.classList.remove('hidden');
+            
+            // Calculate statistics
+            const totalAttempts = quizResults.length;
+            const avgScore = Math.round(quizResults.reduce((sum, result) => sum + result.score, 0) / totalAttempts);
+            const avgAccuracy = Math.round(quizResults.reduce((sum, result) => sum + result.percentage, 0) / totalAttempts);
+            const bestScore = Math.max(...quizResults.map(result => result.score));
+            
+            // Update statistics display
+            document.getElementById('avg-score').textContent = avgScore;
+            document.getElementById('avg-accuracy').textContent = avgAccuracy + '%';
+            document.getElementById('total-attempts').textContent = totalAttempts;
+            document.getElementById('best-score').textContent = bestScore;
+            
+            // Update quiz history
+            const historyContainer = document.getElementById('quiz-history');
+            historyContainer.innerHTML = '';
+            
+            quizResults.slice(-10).reverse().forEach((result, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-lg';
+                historyItem.innerHTML = `
+                    <div>
+                        <div class="font-medium">ครั้งที่ ${totalAttempts - index}</div>
+                        <div class="text-sm text-gray-600">${result.date} ${result.time}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-blue-600">${result.score} คะแนน</div>
+                        <div class="text-sm text-gray-600">${result.percentage}%</div>
+                    </div>
+                `;
+                historyContainer.appendChild(historyItem);
+            });
+            
+            // Update topic statistics
+            const topicStatsContainer = document.getElementById('topic-stats');
+            topicStatsContainer.innerHTML = `
+                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">•</span>
+                        <span class="font-medium">ทัศนธาตุ</span>
+                    </div>
+                    <div class="text-blue-600 font-bold">${avgAccuracy}%</div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">⚖️</span>
+                        <span class="font-medium">หลักการจัดองค์ประกอบศิลป์</span>
+                    </div>
+                    <div class="text-pink-600 font-bold">${avgAccuracy}%</div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-cyan-50 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">📐</span>
+                        <span class="font-medium">หลักการวาดภาพแบบทัศนียภาพ</span>
+                    </div>
+                    <div class="text-cyan-600 font-bold">${avgAccuracy}%</div>
+                </div>
+            `;
+        }
+        
+        function createConfetti(count = 20) {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'968bd57721ce10f8',t:'MTc1NDExOTQ0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
